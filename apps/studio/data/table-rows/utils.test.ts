@@ -9,6 +9,7 @@ const table = {
     { name: 'count', format: 'int4' },
     { name: 'name', format: 'text' },
     { name: 'price', format: 'numeric' },
+    { name: 'rate', format: 'decimal' },
   ],
 }
 
@@ -55,6 +56,12 @@ describe('formatFilterValue', () => {
     expect(formatFilterValue(table, makeFilter('id', String(Number.MIN_SAFE_INTEGER)))).toBe(
       Number.MIN_SAFE_INTEGER
     )
+  })
+
+  it('preserves numeric and decimal filter precision', () => {
+    const preciseValue = '0.123456789012345678901'
+    expect(formatFilterValue(table, makeFilter('price', preciseValue))).toBe(preciseValue)
+    expect(formatFilterValue(table, makeFilter('rate', preciseValue))).toBe(preciseValue)
   })
 
   it.each(['~~', '~~*', '!~~', '!~~*'] as const)(

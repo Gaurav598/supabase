@@ -19,6 +19,10 @@ export function formatFilterValue(
 ) {
   const column = table.columns.find((x) => x.name == filter.column)
   if (column && isNumericalColumn(column.format)) {
+    const format = column.format.toLowerCase()
+    // PostgreSQL numeric/decimal values can exceed JavaScript number precision.
+    if (format === 'numeric' || format === 'decimal') return filter.value
+
     const numberValue = Number(filter.value)
     if (Number.isNaN(numberValue) || Math.abs(numberValue) > Number.MAX_SAFE_INTEGER)
       return filter.value
